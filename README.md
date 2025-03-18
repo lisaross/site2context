@@ -18,7 +18,7 @@ A Python-based tool that converts HTML websites to clean markdown format, with i
 ```bash
 # Clone the repository
 git clone https://github.com/lisaross/site2context.git
-cd site2context
+cd site2context/html2md
 
 # Create and activate a virtual environment (recommended)
 python -m venv venv
