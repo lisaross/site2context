@@ -39,6 +39,43 @@ def consolidate(config_file: str):
     """Consolidate markdown files into a single file with metadata."""
     consolidate_markdown(config_file)
 
+@cli.command()
+@click.argument('input_dir', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option('--config', '-c', type=click.Path(), help='Output configuration file path')
+@click.option('--max-depth', '-d', type=int, default=None, help='Maximum directory depth to process')
+def process(input_dir: str, config: str, max_depth: int):
+    """Process HTML files: generate config, convert to markdown, and consolidate.
+    
+    This command combines all three operations into a single workflow:
+    1. Generates a configuration file by analyzing the HTML files
+    2. Converts HTML files to markdown using the generated config
+    3. Consolidates all markdown files into a single file with metadata
+    """
+    # Generate config if not provided
+    if not config:
+        config = str(Path(input_dir) / 'config.yaml')
+    
+    click.echo("Generating configuration...")
+    generate_config(input_dir, config)
+    
+    click.echo("Loading configuration...")
+    config_data = load_config(config)
+    if max_depth:
+        config_data['max_depth'] = max_depth
+    
+    click.echo("Converting HTML to Markdown...")
+    process_directory(
+        input_dir=Path(config_data['input_dir']),
+        output_dir=Path(config_data['output_dir']),
+        config=config_data,
+        max_depth=config_data.get('max_depth')
+    )
+    
+    click.echo("Consolidating markdown files...")
+    consolidate_markdown(config)
+    
+    click.echo("Processing complete!")
+
 def main():
     """Entry point for the command-line interface."""
     try:
