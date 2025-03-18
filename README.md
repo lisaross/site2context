@@ -76,19 +76,24 @@ If you need more control, you can run each step separately:
 The generated configuration file will look something like this:
 
 ```yaml
-input_dir: "/path/to/your/website"
-output_dir: "./markdown_output"
-content_selectors:
-  - "article"
-  - "main"
-  - "div.content"
+input_dir: "/absolute/path/to/your/website"
+output_dir: "/absolute/path/to/your/website/markdown_output"
+consolidated_output: "/absolute/path/to/your/website/markdown_output/consolidated.md"
+content_selector: "main, article, div.content"
 exclude_selectors:
   - "header"
   - "footer"
   - "nav"
   - "div.sidebar"
   - "div.navigation"
+preserve_links: true
+preserve_images: true
 max_depth: 3
+frontmatter:
+  title:
+    selector: "title"
+  description:
+    selector: "meta[name='description']"
 ```
 
 ## Development
