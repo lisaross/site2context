@@ -255,23 +255,23 @@ def generate_config(directory: str, output_file: Optional[str] = None) -> None:
     # Get directory name for output folder
     dir_path = Path(directory)
     dir_name = dir_path.name
-    output_dir = f"{dir_name}_output_md"
+    output_dir = "markdown_output"  # Changed from f"{dir_name}_output_md"
     
     # If no output file specified, use directory name
     if output_file is None:
-        output_file = f"{dir_name}_config.yaml"
+        output_file = str(dir_path / 'config.yaml')
     
     # Analyze HTML files
     analysis = analyze_html_files(directory)
     
     # Create content selector from top selectors
-    content_selectors = analysis['content_selectors'][:3]  # Use top 3 selectors
+    content_selector = ', '.join(analysis['content_selectors'][:3])  # Use top 3 selectors
     
     # Create configuration
     config = {
-        'input_dir': directory,
-        'output_dir': output_dir,
-        'content_selector': ', '.join(content_selectors),
+        'input_dir': str(dir_path),
+        'output_dir': str(dir_path / output_dir),
+        'content_selector': content_selector,
         'exclude_selectors': [
             # Add element selectors
             *sorted(analysis['boilerplate']['elements']),
@@ -292,7 +292,7 @@ def generate_config(directory: str, output_file: Optional[str] = None) -> None:
         yaml.dump(config, f, default_flow_style=False, sort_keys=False)
     
     print(f"Configuration file generated: {output_file}")
-    print(f"Output directory will be: {output_dir}")
-    print(f"\nDetected content selectors: {', '.join(content_selectors)}")
+    print(f"Output directory will be: {config['output_dir']}")
+    print(f"\nDetected content selector: {content_selector}")
     print("Excluded elements:", len(analysis['boilerplate']['elements']))
     print("Excluded classes:", len(analysis['boilerplate']['classes'])) 
