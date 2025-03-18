@@ -11,6 +11,9 @@ A Python-based tool that extracts content from HTML files and converts it to cle
 - **Selective Processing**: Include or exclude specific content types
 - **Batch Processing**: Process multiple HTML files in a single operation
 - **Error Handling**: Detailed logs and error reports for troubleshooting
+- **Content Consolidation**: Combine multiple markdown files into a single structured document
+- **Metadata Extraction**: Generate comprehensive metadata for content analysis
+- **Smart Content Detection**: Automatically detect main content areas and boilerplate elements
 
 ## Installation
 
@@ -54,6 +57,18 @@ html2md --input-dir <source_directory> --output-dir <target_directory> --content
 html2md --config-file config.yaml
 ```
 
+### Content Consolidation
+
+To combine multiple markdown files into a single structured document:
+
+```bash
+html2md consolidate config.yaml
+```
+
+This will create:
+- A consolidated markdown file with all content organized by section
+- A metadata JSON file containing document and section information
+
 ### Example Configuration File (YAML)
 
 ```yaml
@@ -75,6 +90,11 @@ preserve_images: true
 
 # Processing options
 max_depth: 3  # Maximum directory depth to process (optional)
+
+# Frontmatter settings (optional)
+frontmatter:
+  title: true  # Extract title from content
+  description: true  # Extract description from content
 ```
 
 ### Command Line Options
@@ -90,6 +110,106 @@ max_depth: 3  # Maximum directory depth to process (optional)
 | `--preserve-images` | Keep image references in the markdown output (default: true) |
 | `--max-depth` | Maximum directory depth to process |
 | `--verbose` | Enable detailed logging |
+
+## Using with Real Websites
+
+### Getting Started
+
+1. **Create a Configuration File**
+   Create a YAML configuration file (e.g., `my_site_config.yaml`):
+   ```yaml
+   # Configuration for converting your website to markdown
+   input_dir: "/path/to/your/website"  # Replace with your website directory path
+   output_dir: "./converted_site"      # Output directory for markdown files
+
+   # Content selection
+   content_selector: "div.main-content"  # Adjust this to match your site's main content container
+   exclude_selectors:  # Elements to exclude
+     - "header"
+     - "footer"
+     - "nav"
+     - "div.sidebar"
+     - "div.navigation"
+     - "div.menu"
+     - "div.advertisement"
+
+   # Content preservation options
+   preserve_links: true
+   preserve_images: true
+
+   # Processing options
+   max_depth: 5  # Adjust based on your site's depth
+   ```
+
+2. **Find Your Content Selector**
+   - Open your website in a browser
+   - Use the browser's developer tools (F12)
+   - Inspect the main content area
+   - Find the CSS selector that uniquely identifies your content
+   - Common selectors include:
+     - `article` - For blog posts or articles
+     - `main` - For main content
+     - `div.content` - For content divs
+     - `div.post-content` - For blog post content
+     - `div.entry-content` - For WordPress content
+
+3. **Run the Converter**
+   ```bash
+   html2md --config-file my_site_config.yaml
+   ```
+
+### Tips for Best Results
+
+1. **Test on a Small Subset**
+   - Create a test directory with a few pages
+   - Run the converter on that
+   - Check the output to ensure it's extracting the right content
+
+2. **Common Issues and Solutions**
+   - If content is missing, check if the selector matches your HTML structure
+   - If too much content is included, add more exclude selectors
+   - If links are broken, verify the relative paths in your HTML
+
+3. **Directory Structure**
+   - The converter maintains your original directory structure
+   - Adjust `max_depth` if you want to limit how deep it goes
+   - Make sure you have write permissions for the output directory
+
+4. **Content Preservation**
+   - Set `preserve_links: true` to keep internal links
+   - Set `preserve_images: true` to keep image references
+   - Add specific exclude selectors for unwanted content
+
+### Example Use Cases
+
+1. **Blog Site**
+   ```yaml
+   content_selector: "article"
+   exclude_selectors:
+     - "header"
+     - "footer"
+     - "nav"
+     - "div.sidebar"
+     - "div.comments"
+   ```
+
+2. **Documentation Site**
+   ```yaml
+   content_selector: "div.documentation-content"
+   exclude_selectors:
+     - "div.navigation"
+     - "div.toc"
+     - "div.footer"
+   ```
+
+3. **News Site**
+   ```yaml
+   content_selector: "div.article-content"
+   exclude_selectors:
+     - "div.advertisement"
+     - "div.social-share"
+     - "div.related-articles"
+   ```
 
 ## Development
 
@@ -147,6 +267,9 @@ mypy .
 - Parallel processing for large websites
 - Web interface for configuration and monitoring
 - Metadata extraction with YAML frontmatter support
+- Enhanced content analysis and topic extraction
+- Support for custom content cleaning rules
+- Improved handling of complex HTML structures
 
 ## Contributing
 

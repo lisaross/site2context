@@ -1,0 +1,22 @@
+# Example configuration for HTML to Markdown conversion
+input_dir: "./html_files"  # Directory containing HTML files
+output_dir: "./markdown_output"  # Directory for markdown output
+
+# Content selection
+content_selector: "div.main-content"  # CSS selector for main content container
+exclude_selectors:  # CSS selectors for content to exclude
+  - "div.navigation"
+  - "header"
+  - "footer"
+  - "div.sidebar"
+  - "div.menu"
+  - "div.advertisement"
+  - "div.social-share"
+  - "div.comments"
+
+# Content preservation options
+preserve_links: true  # Keep links in the markdown output
+preserve_images: true  # Keep image references in the markdown output
+
+# Processing options
+max_depth: 3  # Maximum directory depth to process (optional) 

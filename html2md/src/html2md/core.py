@@ -1,13 +1,51 @@
+"""
+Core functionality for HTML to Markdown conversion.
+"""
+
 from pathlib import Path
 from bs4 import BeautifulSoup
 from html2text import HTML2Text
-import yaml
+from typing import Dict, Optional
+import re
 
-def load_config(config_path: str) -> dict:
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
+def clean_markdown(markdown: str) -> str:
+    """
+    Clean up markdown output by removing common issues.
+    
+    Args:
+        markdown: The markdown content to clean
+        
+    Returns:
+        str: The cleaned markdown content
+    """
+    # Remove redundant horizontal rules
+    markdown = re.sub(r'\n\* \* \*\n+', '\n\n', markdown)
+    
+    # Remove empty lines with placeholder text
+    markdown = re.sub(r'\nOur\s*\n', '\n', markdown)
+    
+    # Remove standalone underscores
+    markdown = re.sub(r'\n__\n', '\n', markdown)
+    
+    # Normalize header spacing
+    markdown = re.sub(r'(\n#{1,6} .+)\n+', r'\1\n\n', markdown)
+    
+    # Remove multiple consecutive empty lines
+    markdown = re.sub(r'\n{3,}', '\n\n', markdown)
+    
+    return markdown.strip()
 
 def convert_html_to_md(html_content: str, config: dict) -> str:
+    """
+    Convert HTML content to markdown based on configuration.
+    
+    Args:
+        html_content: The HTML content to convert
+        config: Configuration dictionary with conversion settings
+        
+    Returns:
+        str: The converted markdown content
+    """
     # Create HTML2Text instance
     h2t = HTML2Text()
     h2t.ignore_links = not config.get('preserve_links', True)
@@ -33,11 +71,20 @@ def convert_html_to_md(html_content: str, config: dict) -> str:
         for element in main_content.select(selector):
             element.decompose()
     
-    # Convert to markdown
+    # Convert to markdown and clean up
     markdown = h2t.handle(str(main_content))
-    return markdown.strip()
+    return clean_markdown(markdown)
 
-def process_directory(input_dir: Path, output_dir: Path, config: dict, max_depth: int = None) -> None:
+def process_directory(input_dir: Path, output_dir: Path, config: dict, max_depth: Optional[int] = None) -> None:
+    """
+    Process all HTML files in a directory and convert them to markdown.
+    
+    Args:
+        input_dir: Directory containing HTML files
+        output_dir: Directory for markdown output
+        config: Configuration dictionary
+        max_depth: Maximum directory depth to process
+    """
     # Create output directory
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -73,19 +120,4 @@ def process_directory(input_dir: Path, output_dir: Path, config: dict, max_depth
                 print(f"No content found in {html_file}")
                 
         except Exception as e:
-            print(f"Error processing {html_file}: {str(e)}")
-
-def main():
-    # Load config
-    config = load_config('obesitycanada_config.yaml')
-    
-    # Process directory
-    process_directory(
-        input_dir=config['input_dir'],
-        output_dir=config['output_dir'],
-        config=config,
-        max_depth=config.get('max_depth')
-    )
-
-if __name__ == '__main__':
-    main() 
+            print(f"Error processing {html_file}: {str(e)}") 

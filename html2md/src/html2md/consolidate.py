@@ -1,25 +1,24 @@
-#!/usr/bin/env python3
 """
-Script to consolidate markdown files into a single file for LLM context.
-This script will:
-1. Read all markdown files from the output directory
-2. Combine them with clear section headers
-3. Create a single consolidated markdown file with LLM-friendly metadata
+Markdown file consolidation functionality.
 """
 
 import os
-import sys
-from pathlib import Path
-from typing import List, Dict
 import re
 from datetime import datetime
 import json
-import yaml
+from pathlib import Path
+from typing import Dict, List
+from .config import load_config
 
 def clean_filename(filename: str) -> str:
     """
     Convert filename to a readable title.
-    Removes extension and converts underscores/hyphens to spaces.
+    
+    Args:
+        filename: The filename to clean
+        
+    Returns:
+        str: Cleaned filename
     """
     # Remove extension
     name = os.path.splitext(filename)[0]
@@ -35,6 +34,12 @@ def clean_filename(filename: str) -> str:
 def clean_content(content: str) -> str:
     """
     Clean up markdown content by removing extra whitespace and formatting.
+    
+    Args:
+        content: The markdown content to clean
+        
+    Returns:
+        str: Cleaned markdown content
     """
     # Fix special characters
     content = content.replace('&#x2019;', "'")
@@ -74,9 +79,15 @@ def clean_content(content: str) -> str:
     
     return content
 
-def extract_metadata(content: str) -> Dict[str, str]:
+def extract_metadata(content: str) -> Dict[str, List[str]]:
     """
     Extract metadata from content such as main topics, key terms, etc.
+    
+    Args:
+        content: The markdown content to analyze
+        
+    Returns:
+        dict: Dictionary containing extracted metadata
     """
     # Extract main topics (headers)
     headers = re.findall(r'#+ (.*)', content)
@@ -96,6 +107,12 @@ def extract_metadata(content: str) -> Dict[str, str]:
 def generate_table_of_contents(content: str) -> str:
     """
     Generate a table of contents from the headers in the content.
+    
+    Args:
+        content: The markdown content to analyze
+        
+    Returns:
+        str: Generated table of contents
     """
     toc = ["## Table of Contents\n"]
     lines = content.split('\n')
@@ -108,16 +125,26 @@ def generate_table_of_contents(content: str) -> str:
                 toc.append(f"{indent}- {text}")
     return '\n'.join(toc)
 
-def load_config(config_path: str) -> dict:
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
-
 def get_site_name(config: dict) -> str:
-    # Extract site name from input_dir path
+    """
+    Extract site name from input directory path.
+    
+    Args:
+        config: Configuration dictionary
+        
+    Returns:
+        str: Site name
+    """
     input_dir = Path(config['input_dir'])
     return input_dir.name
 
 def consolidate_markdown(config_path: str) -> None:
+    """
+    Consolidate markdown files into a single file with metadata.
+    
+    Args:
+        config_path: Path to the configuration file
+    """
     # Load config
     config = load_config(config_path)
     site_name = get_site_name(config)
@@ -189,11 +216,4 @@ def consolidate_markdown(config_path: str) -> None:
         # Write metadata file
         with open(metadata_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2)
-        print(f"Metadata file created: {metadata_file}")
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python consolidate_md.py <config_file>")
-        sys.exit(1)
-    
-    consolidate_markdown(sys.argv[1]) 
+        print(f"Metadata file created: {metadata_file}") 

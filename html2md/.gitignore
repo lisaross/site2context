@@ -36,11 +36,27 @@ ENV/
 htmlcov/
 .pytest_cache/
 .mypy_cache/
+tests/
+test_output/
+test_config.json
+test_configs/
+*.test.json
+*.test.yaml
+*.test.yml
+*.test.md
+*.test.html
+*.test.txt
+*.test.log
+test-results/
+test-reports/
 
 # Distribution
 dist/
 build/
 *.egg-info/
 
-# Logs
+# Misc
+.DS_Store
+.env
+.env.local
 *.log 
