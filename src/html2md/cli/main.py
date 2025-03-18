@@ -51,9 +51,11 @@ def process(input_dir: str, config: str, max_depth: int):
     2. Converts HTML files to markdown using the generated config
     3. Consolidates all markdown files into a single file with metadata
     """
+    input_path = Path(input_dir)
+    
     # Generate config if not provided
     if not config:
-        config = str(Path(input_dir) / 'config.yaml')
+        config = str(input_path / 'config.yaml')
     
     click.echo("Generating configuration...")
     generate_config(input_dir, config)
@@ -62,6 +64,11 @@ def process(input_dir: str, config: str, max_depth: int):
     config_data = load_config(config)
     if max_depth:
         config_data['max_depth'] = max_depth
+    
+    # Set output directories within the input directory
+    config_data['input_dir'] = str(input_path)
+    config_data['output_dir'] = str(input_path / 'markdown_output')
+    config_data['consolidated_output'] = str(input_path / 'markdown_output' / 'consolidated.md')
     
     click.echo("Converting HTML to Markdown...")
     process_directory(
