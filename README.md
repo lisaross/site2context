@@ -2,15 +2,6 @@
 
 A Python-based tool that extracts content from HTML files and converts it to clean markdown format, preserving the original directory structure while excluding boilerplate elements like headers, footers, and navigation.
 
-## Overview
-
-HTML to Markdown Extractor is designed for content managers, technical writers, data scientists, and developers who need to extract the meaningful content from HTML files while converting it to markdown format. This tool is particularly useful for:
-
-- Preparing content for documentation systems
-- Creating clean datasets for LLM training
-- Archiving website content in a readable format
-- Content migration projects
-
 ## Features
 
 - **Content Extraction**: Extract main content from HTML files based on CSS selectors
@@ -23,44 +14,70 @@ HTML to Markdown Extractor is designed for content managers, technical writers, 
 
 ## Installation
 
+### From Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/html-to-markdown-extractor.git
 cd html-to-markdown-extractor
 
-# Install dependencies
-pip install -r requirements.txt
+# Create and activate a virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install the package in development mode
+pip install -e .
 ```
+
+### Dependencies
+
+The package requires Python 3.8 or higher and the following dependencies:
+
+- beautifulsoup4>=4.12.0
+- html2text>=2020.1.16
+- lxml>=4.9.0
+- PyYAML>=6.0.1
+- click>=8.1.0
+- rich>=13.0.0
 
 ## Usage
 
 ### Basic Command
 
 ```bash
-python html2md.py --input-dir <source_directory> --output-dir <target_directory> --content-selector "div.main-content"
+html2md --input-dir <source_directory> --output-dir <target_directory> --content-selector "div.main-content"
 ```
 
 ### With Configuration File
 
 ```bash
-python html2md.py --config-file config.json
+html2md --config-file config.yaml
 ```
 
-### Example Configuration File (JSON)
+### Example Configuration File (YAML)
 
-```json
-{
-  "input_dir": "./html_files",
-  "output_dir": "./markdown_output",
-  "content_selector": "div.main-content",
-  "exclude_selectors": ["div.navigation", "footer", "header"],
-  "preserve_links": true,
-  "preserve_images": false,
-  "max_depth": 3
-}
+```yaml
+# Input and output directories
+input_dir: "./html_files"
+output_dir: "./markdown_output"
+
+# Content selection
+content_selector: "div.main-content"  # CSS selector for main content container
+exclude_selectors:  # CSS selectors for content to exclude
+  - "div.navigation"
+  - "header"
+  - "footer"
+  - "div.sidebar"
+
+# Content preservation options
+preserve_links: true
+preserve_images: true
+
+# Processing options
+max_depth: 3  # Maximum directory depth to process (optional)
 ```
 
-## Command Line Options
+### Command Line Options
 
 | Option | Description |
 |--------|-------------|
@@ -71,7 +88,48 @@ python html2md.py --config-file config.json
 | `--config-file` | Path to configuration file |
 | `--preserve-links` | Keep links in the markdown output (default: true) |
 | `--preserve-images` | Keep image references in the markdown output (default: true) |
+| `--max-depth` | Maximum directory depth to process |
 | `--verbose` | Enable detailed logging |
+
+## Development
+
+### Setup Development Environment
+
+```bash
+# Install development dependencies
+pip install -e ".[dev]"
+
+# Install pre-commit hooks
+pre-commit install
+```
+
+### Running Tests
+
+```bash
+# Run tests with coverage
+pytest
+
+# Run tests without coverage
+pytest --no-cov
+```
+
+### Code Style
+
+The project uses:
+- Black for code formatting
+- isort for import sorting
+- mypy for type checking
+
+```bash
+# Format code
+black .
+
+# Sort imports
+isort .
+
+# Type checking
+mypy .
+```
 
 ## Current Limitations
 
