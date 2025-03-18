@@ -1,0 +1,18 @@
+# Test configuration for HTML to Markdown converter
+input_dir: "./test_html_files"
+output_dir: "./markdown_output"
+
+# Content selection
+content_selector: "div.main-content"  # Main content container
+exclude_selectors:  # Elements to exclude
+  - "div.sidebar"
+  - "header"
+  - "footer"
+  - "nav"
+
+# Content preservation options
+preserve_links: true
+preserve_images: true
+
+# Processing options
+max_depth: 3 
