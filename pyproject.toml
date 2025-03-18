@@ -32,7 +32,7 @@ dev = [
 ]
 
 [project.scripts]
-html2md = "html2md.cli.main:main"
+html2md = "html2md.cli.main:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/html2md"]
