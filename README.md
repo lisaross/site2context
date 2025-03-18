@@ -13,6 +13,14 @@ A Python-based tool that converts HTML websites to clean markdown format, with i
 
 ## Installation
 
+### Download the Repository
+
+```bash
+# Clone the repository
+git clone https://github.com/lisaross/site2context.git
+cd site2context
+```
+
 ### Dependencies
 
 The script requires Python 3.8 or higher and the following dependencies:
